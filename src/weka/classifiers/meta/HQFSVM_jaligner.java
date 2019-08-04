@@ -1,16 +1,18 @@
 package weka.classifiers.meta;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.StringTokenizer;
 
-import jaligner.Alignment;
 import jaligner.Sequence;
-import jaligner.SmithWatermanGotoh;
 import jaligner.matrix.Matrix;
-import jaligner.matrix.MatrixLoaderException;
+import weka.classifiers.evaluation.Evaluation;
 import weka.classifiers.functions.LibSVM;
+import weka.classifiers.lazy.IBk;
 import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.DenseInstance;
@@ -18,28 +20,28 @@ import weka.core.Capabilities.Capability;
 import weka.core.TechnicalInformation.Type;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.Range;
 import weka.core.TechnicalInformation;
 import weka.core.Utils;
+import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.pmml.jaxbbindings.SeasonalityExpoSmooth;
 
 /**
- * @author hqf ¥´µ›∫Àæÿ’Û∏¯svm
+ * @author hqf ‰º†ÈÄíÊ†∏Áü©ÈòµÁªôsvm
  */
 
 public class HQFSVM_jaligner extends LibSVM {
 
 	private static final int SIZE = 127;
-	float[][] scores = new float[SIZE][SIZE];
-	public Instances ii;// ¥Ê¥¢—µ¡∑ºØ
-	public float[] index = new float[2];
-	public int flag = 0;// 1±Ì ædna/∆‰”‡protein
-	int flag1 = 1;// –Ú∫≈
+	float[][] scores = new float[SIZE][SIZE];// Â≠òÂÇ®ÁΩöÂàÜÁü©Èòµ
+	public Instances ii;// Â≠òÂÇ®ËÆ≠ÁªÉÈõÜ
+	public float[] index = new float[2];// ‰ªøÂ∞ÑÁΩöÂàÜÁöÑ ÁΩöÂàÜËÆæÁΩÆ
+	public static int flag = 0;// 1Ë°®Á§∫dna/ÂÖ∂‰Ωôprotein
+	static int length;
+	static String[] m_ClassNames;
 
-	int length;
-	String[] m_ClassNames;
+	public void classname(Instances insts) {// ËÆ∞ÂΩïÊ†áÁ≠æÂêçÂ≠ó
 
-	@Override
-	public void buildClassifier(Instances insts) throws Exception {
-		// TODO Auto-generated method stub
 		length = insts.numClasses();
 
 		m_ClassNames = new String[length];
@@ -48,6 +50,15 @@ public class HQFSVM_jaligner extends LibSVM {
 
 			m_ClassNames[i] = insts.classAttribute().value(i);
 		}
+
+	}
+
+	@Override
+	public void buildClassifier(Instances insts) throws Exception {
+		// TODO Auto-generated method stub
+
+		classname(insts);
+
 		if (insts.numAttributes() <= 2) {
 
 			ii = insts;
@@ -80,7 +91,7 @@ public class HQFSVM_jaligner extends LibSVM {
 				instances.add(instance1);
 
 			}
-			// System.out.println(instances);
+
 			super.buildClassifier(instances);
 		} else {
 			super.buildClassifier(insts);
@@ -136,7 +147,7 @@ public class HQFSVM_jaligner extends LibSVM {
 	}
 
 	/*
-	 * @author hqf ’‚∏ˆ∑Ω∑®÷–æÕ «∂‘µ•∏ˆ µ¿˝æÕ––‘§≤‚£¨‘ı√¥‘§≤‚ƒÿ£¨’‚æÕ–Ë“™≈–∂œ÷√–≈∂»¡À£¨ ∂‘µ•∏ˆ µ¿˝∑µªÿ÷√–≈∂»Ωœ¥Ûµƒ±Í«©£¨
+	 * @author hqf Ëøô‰∏™ÊñπÊ≥ï‰∏≠Â∞±ÊòØÂØπÂçï‰∏™ÂÆû‰æãÂ∞±Ë°åÈ¢ÑÊµãÔºåÊÄé‰πàÈ¢ÑÊµãÂë¢ÔºåËøôÂ∞±ÈúÄË¶ÅÂà§Êñ≠ÁΩÆ‰ø°Â∫¶‰∫ÜÔºå ÂØπÂçï‰∏™ÂÆû‰æãËøîÂõûÁΩÆ‰ø°Â∫¶ËæÉÂ§ßÁöÑÊ†áÁ≠æÔºå
 	 */
 	@Override
 	public double classifyInstance(Instance instance) throws Exception {
@@ -145,7 +156,7 @@ public class HQFSVM_jaligner extends LibSVM {
 
 		if (instance.numAttributes() <= 2) {
 
-			String[] kk = k_function(ii, instance);// º∆À„∫Àæÿ’Û iiŒ™—µ¡∑ºØ
+			String[] kk = k_function(ii, instance);// ËÆ°ÁÆóÊ†∏Áü©Èòµ ii‰∏∫ËÆ≠ÁªÉÈõÜ
 
 			ArrayList<Attribute> l = attributes(ii.numInstances() + 1);
 
@@ -158,7 +169,7 @@ public class HQFSVM_jaligner extends LibSVM {
 			Instance instance1 = new DenseInstance(1, num);
 
 			int k = 0;
-			num[0] = 1;// ¥˝ºÏ≤È
+			num[0] = 1;
 			for (k = 1; k < instance1.numAttributes() - 1; k++) {
 
 				num[k] = Double.parseDouble(kk[k + 1]);
@@ -227,7 +238,7 @@ public class HQFSVM_jaligner extends LibSVM {
 	}
 
 	/**
-	 * @author sponsor-fly Ωª≤Ê—È÷§ / ƒ£–Õ∆¿π¿◊ﬂ’‚¿Ô
+	 * @author sponsor-fly ‰∫§ÂèâÈ™åËØÅ / Ê®°ÂûãËØÑ‰º∞Ëµ∞ËøôÈáå
 	 */
 	@Override
 	public double[] distributionForInstance(Instance instance) throws Exception {
@@ -236,7 +247,7 @@ public class HQFSVM_jaligner extends LibSVM {
 
 		if (instance.numAttributes() <= 2) {
 
-			String[] kk = k_function(ii, instance);// º∆À„∫Àæÿ’Û iiŒ™—µ¡∑ºØ
+			String[] kk = k_function(ii, instance);// ËÆ°ÁÆóÊ†∏Áü©Èòµ ii‰∏∫ËÆ≠ÁªÉÈõÜ
 
 			ArrayList<Attribute> l = attributes(ii.numInstances() + 1);
 
@@ -249,8 +260,8 @@ public class HQFSVM_jaligner extends LibSVM {
 			Instance instance1 = new DenseInstance(1, num);
 
 			int k = 0;
-			num[0] = flag1;// ¥˝ºÏ≤È
-			flag1++;
+			num[0] = 1;
+
 			for (k = 1; k < instance1.numAttributes() - 1; k++) {
 
 				num[k] = Double.parseDouble(kk[k + 1]);
@@ -262,6 +273,7 @@ public class HQFSVM_jaligner extends LibSVM {
 			instance1.setClassMissing();
 
 			instances.add(instance1);
+			// System.out.println(instances);
 
 			dist = super.distributionForInstance(instances.instance(0));
 
@@ -274,7 +286,7 @@ public class HQFSVM_jaligner extends LibSVM {
 	}
 
 	/**
-	 * @author hqf ’‚∏ˆ∑Ω∑®…Ë÷√‘⁄wekaµƒclassifyµƒchooseœ¬ «∑ÒŒ™ª“…´£ª“≤æÕ «∂®“Â∏√∑÷¿‡∆˜ø…“‘¥¶¿Ì ≤√¥¿‡–Õ ˝æ›
+	 * @author hqf Ëøô‰∏™ÊñπÊ≥ïËÆæÁΩÆÂú®wekaÁöÑclassifyÁöÑchoose‰∏ãÊòØÂê¶‰∏∫ÁÅ∞Ëâ≤Ôºõ‰πüÂ∞±ÊòØÂÆö‰πâËØ•ÂàÜÁ±ªÂô®ÂèØ‰ª•Â§ÑÁêÜ‰ªÄ‰πàÁ±ªÂûãÊï∞ÊçÆ
 	 */
 
 	@Override
@@ -300,23 +312,23 @@ public class HQFSVM_jaligner extends LibSVM {
 		return result;
 	}
 
-	public int test() {
+	public int test(Instances data) {
 
 		int flag = 0;
 
-		double rate = 0;// Õ≥º∆ATCGUµƒ∫¨¡ø
+		double rate = 0;// ÁªüËÆ°ATCGUÁöÑÂê´Èáè
 
-		rate += stringCount(ii.instance(0).stringValue(0), "a");
+		rate += stringCount(data.instance(0).stringValue(0), "a");
 
-		rate += stringCount(ii.instance(0).stringValue(0), "t");
+		rate += stringCount(data.instance(0).stringValue(0), "t");
 
-		rate += stringCount(ii.instance(0).stringValue(0), "g");
+		rate += stringCount(data.instance(0).stringValue(0), "g");
 
-		rate += stringCount(ii.instance(0).stringValue(0), "c");
+		rate += stringCount(data.instance(0).stringValue(0), "c");
 
-		rate += stringCount(ii.instance(0).stringValue(0), "u");
+		rate += stringCount(data.instance(0).stringValue(0), "u");
 
-		rate += stringCount(ii.instance(0).stringValue(0), "x");
+		rate += stringCount(data.instance(0).stringValue(0), "x");
 
 		if (rate > 0.9) {
 
@@ -326,15 +338,16 @@ public class HQFSVM_jaligner extends LibSVM {
 		return flag;
 	}
 
-	public String[] k_function(Instances train, Instance test) throws MatrixLoaderException {
+	public String[] k_function(Instances train, Instance test) {
+
+		double max1 = 1;
+		double min1 = 0;
 
 		int trainnum = train.numInstances();
 
 		String kk[] = new String[trainnum + 2];
 
-		double[] s;
-
-		// µº»Î¥Ú∑÷æÿ’Û
+		// ÂØºÂÖ•ÊâìÂàÜÁü©Èòµ
 		Matrix matrix = null;
 
 		if (flag == 1) {// dna
@@ -347,14 +360,10 @@ public class HQFSVM_jaligner extends LibSVM {
 		}
 		String teststring;
 		String trainstring;
-		String teststring1;
-		String trainstring1;
 		String testins = null;
 		String trainins = null;
 
-		teststring1 = String.valueOf(test);
-
-		teststring = teststring1.toUpperCase();
+		teststring = String.valueOf(test).toUpperCase();
 
 		if (teststring.trim().length() != 0) {
 
@@ -362,16 +371,15 @@ public class HQFSVM_jaligner extends LibSVM {
 
 			testins = a[0];
 
-			kk[0] = a[1];
+//			kk[0] = a[1];
+			kk[0] = "?";
 
-			kk[1] = String.valueOf((0 + 1));
+			kk[1] = String.valueOf(1);
 
 		}
 		for (int j = 0; j < trainnum; j++) {
 
-			trainstring1 = String.valueOf(train.instance(j));
-
-			trainstring = trainstring1.toUpperCase();
+			trainstring = String.valueOf(train.instance(j)).toUpperCase();
 
 			if (trainstring.trim().length() != 0) {
 
@@ -384,13 +392,7 @@ public class HQFSVM_jaligner extends LibSVM {
 
 			Sequence s2 = new Sequence(trainins);
 
-			Alignment alignment = SmithWatermanGotoh.align(s1, s2, matrix, index[0], index[1]);
-
-			float similarity = alignment.getSimilarity();
-
-			float len = alignment.getSequence1().length;
-
-			float sim = similarity / len;
+			double sim = align(s1, s2, matrix, index[0], index[1]);
 
 			String dd = String.valueOf(sim);
 
@@ -398,17 +400,44 @@ public class HQFSVM_jaligner extends LibSVM {
 
 		}
 
+		if (flag == 0) {// protein
+			for (int j = 0; j < trainnum; j++) {
+				max1 = min1 = Double.parseDouble(kk[2]);
+
+				double cc = Double.parseDouble(kk[j + 2]);
+
+				if (cc > max1) {
+					max1 = cc;
+				}
+				if (cc < min1) {
+					min1 = cc;
+				}
+
+			}
+
+			for (int j = 0; j < trainnum; j++) {
+				double tt = Double.parseDouble(kk[j + 2]);
+				double ss = (tt - min1) / (max1 - min1);
+
+				String dd = String.valueOf(ss);
+
+				kk[j + 2] = dd;
+			}
+
+		}
+
 		return kk;
 
 	}
 
-	public String[][] kernel_function(Instances data) throws IOException, MatrixLoaderException {
+	public String[][] kernel_function(Instances data) throws IOException {
 
 		Matrix matrix = null;
 
-		flag = test();
+		flag = test(data);
 
 		if (flag == 1) {// DNA
+			System.out.println("dna");
 
 			index[0] = 5.0f;
 			index[1] = 2.0f;
@@ -416,6 +445,7 @@ public class HQFSVM_jaligner extends LibSVM {
 			matrix = new Matrix("matrix", DnaMatrix());
 
 		} else {// Protein
+			System.out.println("protein");
 
 			index[0] = 10.0f;
 			index[1] = 0.5f;
@@ -426,7 +456,7 @@ public class HQFSVM_jaligner extends LibSVM {
 		int sum = data.numInstances();
 
 		String tag;
-		String b[] = new String[sum];// ¥Ê∑≈◊÷∑˚¥Æ
+		String b[] = new String[sum];// Â≠òÊîæÂ≠óÁ¨¶‰∏≤
 		String kk[][] = new String[sum][sum + 2];
 
 		for (int n = 0; n < sum; n++) {
@@ -446,34 +476,63 @@ public class HQFSVM_jaligner extends LibSVM {
 			}
 		}
 
-		// º∆À„…œ»˝Ω«œ‡À∆∂»
+		// ËÆ°ÁÆó‰∏ä‰∏âËßíÁõ∏‰ººÂ∫¶
 		for (int j = 0; j < b.length; j++) {
 
-			for (int k = j + 1; k < b.length; k++) {
+			for (int k = j; k < b.length; k++) {
 
 				Sequence s1 = new Sequence(b[j]);
 
 				Sequence s2 = new Sequence(b[k]);
 
-				Alignment alignment = SmithWatermanGotoh.align(s1, s2, matrix, index[0], index[1]);
-
-				float similarity = alignment.getSimilarity();
-
-				float len = alignment.getSequence1().length;
-
-				float sim = similarity / len;
+				double sim = align(s1, s2, matrix, index[0], index[1]);
 
 				String dd = String.valueOf(sim);
 
 				kk[j][k + 2] = dd;
+
 			}
 
 		}
-		// ∂‘Ω«œﬂœ‡À∆∂»∂º «1£¨ºı…Ÿº∆À„¡ø
+		if (flag == 0) {// protein
+			double max = Double.parseDouble(kk[0][2]);
+			double min = max;
+			for (int j = 0; j < b.length; j++) {
+
+				for (int k = j; k < b.length; k++) {
+					double dd = Double.parseDouble(kk[j][k + 2]);
+					if (dd > max) {
+						max = dd;
+
+					}
+					if (dd < min) {
+						min = dd;
+
+					}
+
+				}
+			}
+
+			for (int j = 0; j < b.length; j++) {
+
+				for (int k = j + 1; k < b.length; k++) {
+
+					double tt = Double.parseDouble(kk[j][k + 2]);
+
+					double ss = (tt - min) / (max - min);
+
+					String dd = String.valueOf(ss);
+
+					kk[j][k + 2] = dd;
+
+				}
+			}
+		}
+		// ÂØπËßíÁ∫øÁõ∏‰ººÂ∫¶ÈÉΩÊòØ1ÔºåÂáèÂ∞ëËÆ°ÁÆóÈáè
 		for (int i = 0; i < kk.length; i++) {
 			kk[i][i + 2] = "1";
 		}
-		// …œ»˝Ω«œ‡À∆∂»∏≥÷µ∏¯œ¬»˝Ω«
+		// ‰∏ä‰∏âËßíÁõ∏‰ººÂ∫¶ËµãÂÄºÁªô‰∏ã‰∏âËßí
 		for (int i = 0; i < kk.length; i++) {
 			for (int j = i; j < kk.length; j++) {
 				kk[j][i + 2] = kk[i][j + 2];
@@ -483,6 +542,170 @@ public class HQFSVM_jaligner extends LibSVM {
 
 		return kk;
 
+	}
+
+	public static double align(Sequence s1, Sequence s2, Matrix matrix, float o, float e) {
+
+		float[][] scores = matrix.getScores();
+
+		int m = s1.length() + 1;
+		int n = s2.length() + 1;
+
+		byte[] pointers = new byte[m * n];
+
+		// Initializes the boundaries of the traceback matrix to STOP.
+
+		short[] sizesOfVerticalGaps = new short[m * n];
+		short[] sizesOfHorizontalGaps = new short[m * n];
+		for (int i = 0, k = 0; i < m; i++, k += n) {
+			for (int j = 0; j < n; j++) {
+				sizesOfVerticalGaps[k + j] = sizesOfHorizontalGaps[k + j] = 1;
+			}
+		}
+
+		double sim = construct(s1, s2, scores, o, e, sizesOfVerticalGaps, sizesOfHorizontalGaps);
+
+		return sim;
+	}
+
+	private static double construct(Sequence s1, Sequence s2, float[][] matrix, float o, float e,
+			short[] sizesOfVerticalGaps, short[] sizesOfHorizontalGaps) {
+
+		char[] a1 = s1.toArray();
+		char[] a2 = s2.toArray();
+
+		int m = s1.length() + 1;
+		int n = s2.length() + 1;
+
+		float f; // score of alignment x1...xi to y1...yi if xi aligns to yi
+		float[] g = new float[n]; // score if xi aligns to a gap after yi
+		float h; // score if yi aligns to a gap after xi
+		float[] v = new float[n]; // best score of alignment x1...xi to y1...yi
+		float vDiagonal;
+
+		g[0] = Float.NEGATIVE_INFINITY;
+		h = Float.NEGATIVE_INFINITY;
+		v[0] = 0;
+
+		for (int j = 1; j < n; j++) {
+			g[j] = Float.NEGATIVE_INFINITY;
+			v[j] = 0;
+		}
+		float[][] hh = new float[m + 1][n + 1];
+		hh[0][0] = 0;
+		for (int i = 1; i < n + 1; i++) {
+			hh[0][i] = (-o) + i * (-e);
+
+		}
+		for (int j = 1; j < m + 1; j++) {
+			hh[j][0] = (-o) + j * (-e);
+
+		}
+
+		float similarityScore, g1, g2, h1, h2;
+
+		// Cell cell = new Cell();
+		// ÂæóÂàÜÁü©Èòµ
+
+		/*
+		 * for (char i : a2) { System.out.print("\t" + i);
+		 * 
+		 * }
+		 */
+		for (int i = 1, k = n; i < m; i++, k += n) {
+			h = Float.NEGATIVE_INFINITY;
+			vDiagonal = v[0];
+			// ËæìÂá∫ÂæóÂàÜÁü©ÈòµÊ†ºÂºè
+			// System.out.println();
+			// System.out.print(a1[i - 1] + "\t");
+			for (int j = 1, l = k + 1; j < n; j++, l++) {
+				similarityScore = matrix[a1[i - 1]][a2[j - 1]];
+
+				// Fill the matrices
+				// f = vDiagonal + similarityScore;
+				f = hh[i - 1][j - 1] + similarityScore;
+
+				g1 = g[j] - e;
+				// g2 = v[j] - o;// ÂûÇÁõ¥
+
+				g2 = hh[i - 1][j] - o - e;
+
+				if (g1 > g2) {
+					g[j] = g1;
+					sizesOfVerticalGaps[l] = (short) (sizesOfVerticalGaps[l - n] + 1);
+				} else {
+					g[j] = g2;
+				}
+
+				h1 = h - e;
+				// h2 = v[j - 1] - o;//Ê∞¥Âπ≥
+
+				h2 = hh[i][j - 1] - o - e;
+
+				if (h1 > h2) {
+					h = h1;
+					sizesOfHorizontalGaps[l] = (short) (sizesOfHorizontalGaps[l - 1] + 1);
+				} else {
+					h = h2;
+				}
+
+				vDiagonal = v[j];
+				v[j] = maximum(f, g[j], h);
+				hh[i][j] = v[j];
+				// ËæìÂá∫ÂæóÂàÜÁü©Èòµ
+				// System.out.print(v[j] + "\t");
+
+			}
+			// System.out.println();
+		}
+
+		double sim = 0;
+		if (flag == 1) {
+			m--;
+			n--;
+
+			int fc = 0;
+			double x = 0;
+			double y = 0;
+
+			if (m < n) {
+				fc = m;
+				m = n;
+				n = fc;
+			}
+
+			x = n - e * (m - n);
+
+			y = -3 * n - e * (m - n);
+
+			if (m != n) {
+				x = x - 3;
+				y = y - 3;
+			}
+
+			sim = (hh[a1.length][a2.length] - y) / (x - y);
+
+		} else {// protein
+			// System.out.println(hh[a1.length][a2.length]);
+			sim = hh[a1.length][a2.length];
+		}
+
+		// System.out.println(sim);
+		return sim;
+	}
+
+	private static float maximum(float a, float b, float c) {
+		if (a > b) {
+			if (a > c) {
+				return a;
+			} else {
+				return c;
+			}
+		} else if (b > c) {
+			return b;
+		} else {
+			return c;
+		}
 	}
 
 	public static float stringCount(String str, String key) {
@@ -514,30 +737,34 @@ public class HQFSVM_jaligner extends LibSVM {
 	public float[][] ProteinMatrix() {
 		char[] acid = { 'A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y',
 				'V', 'B', 'Z', 'X', '*' };
-		String[] ll = { "4 -1 -2 -2  0 -1 -1  0 -2 -1 -1 -1 -1 -2 -1  1  0 -3 -2  0 -2 -1  0 -4 ",
-				"-1  5  0 -2 -3  1  0 -2  0 -3 -2  2 -1 -3 -2 -1 -1 -3 -2 -3 -1  0 -1 -4",
-				"-2  0  6  1 -3  0  0  0  1 -3 -3  0 -2 -3 -2  1  0 -4 -2 -3  3  0 -1 -4",
-				"-2 -2  1  6 -3  0  2 -1 -1 -3 -4 -1 -3 -3 -1  0 -1 -4 -3 -3  4  1 -1 -4",
-				"0 -3 -3 -3  9 -3 -4 -3 -3 -1 -1 -3 -1 -2 -3 -1 -1 -2 -2 -1 -3 -3 -2 -4",
-				"-1  1  0  0 -3  5  2 -2  0 -3 -2  1  0 -3 -1  0 -1 -2 -1 -2  0  3 -1 -4",
-				"-1  0  0  2 -4  2  5 -2  0 -3 -3  1 -2 -3 -1  0 -1 -3 -2 -2  1  4 -1 -4",
-				"0 -2  0 -1 -3 -2 -2  6 -2 -4 -4 -2 -3 -3 -2  0 -2 -2 -3 -3 -1 -2 -1 -4",
-				"-2  0  1 -1 -3  0  0 -2  8 -3 -3 -1 -2 -1 -2 -1 -2 -2  2 -3  0  0 -1 -4",
-				"-1 -3 -3 -3 -1 -3 -3 -4 -3  4  2 -3  1  0 -3 -2 -1 -3 -1  3 -3 -3 -1 -4",
-				"-1 -2 -3 -4 -1 -2 -3 -4 -3  2  4 -2  2  0 -3 -2 -1 -2 -1  1 -4 -3 -1 -4",
-				"-1  2  0 -1 -3  1  1 -2 -1 -3 -2  5 -1 -3 -1  0 -1 -3 -2 -2  0  1 -1 -4",
-				"-1 -1 -2 -3 -1  0 -2 -3 -2  1  2 -1  5  0 -2 -1 -1 -1 -1  1 -3 -1 -1 -4",
-				"-2 -3 -3 -3 -2 -3 -3 -3 -1  0  0 -3  0  6 -4 -2 -2  1  3 -1 -3 -3 -1 -4",
-				"-1 -2 -2 -1 -3 -1 -1 -2 -2 -3 -3 -1 -2 -4  7 -1 -1 -4 -3 -2 -2 -1 -2 -4",
-				"1 -1  1  0 -1  0  0  0 -1 -2 -2  0 -1 -2 -1  4  1 -3 -2 -2  0  0  0 -4",
-				"0 -1  0 -1 -1 -1 -1 -2 -2 -1 -1 -1 -1 -2 -1  1  5 -2 -2  0 -1 -1  0 -4",
-				"-3 -3 -4 -4 -2 -2 -3 -2 -2 -3 -2 -3 -1  1 -4 -3 -2 11  2 -3 -4 -3 -2 -4",
-				"-2 -2 -2 -3 -2 -1 -2 -3  2 -1 -1 -2 -1  3 -3 -2 -2  2  7 -1 -3 -2 -1 -4",
-				"0 -3 -3 -3 -1 -2 -2 -3 -3  3  1 -2  1 -1 -2 -2  0 -3 -1  4 -3 -2 -1 -4",
-				"-2 -1  3  4 -3  0  1 -1  0 -3 -4  0 -3 -3 -2  0 -1 -4 -3 -3  4  1 -1 -4",
-				"-1  0  0  1 -3  3  4 -2  0 -3 -3  1 -1 -3 -1  0 -1 -3 -2 -2  1  4 -1 -4",
-				"0 -1 -1 -1 -2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -2  0  0 -2 -1 -1 -1 -1 -1 -4",
-				"-4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4  1" };
+		String[] ll = {
+
+				"  4 -1  0  0 -3  1  0  0 -2  0 -1  0  1 -2 -1  1  1 -5 -4  1  0  0  0 -7 ",
+				" -1  8 -2 -1 -2  3 -1 -2 -1 -3 -2  1  0 -1 -1 -1 -3  0  0 -1 -2  0 -1 -7 ",
+				"  0 -2  8  1 -1 -1 -1  0 -1  0 -2  0  0 -1 -3  0  1 -7 -4 -2  4 -1  0 -7 ",
+				"  0 -1  1  9 -3 -1  1 -1 -2 -4 -1  0 -3 -5 -1  0 -1 -4 -1 -2  5  0 -1 -7 ",
+				" -3 -2 -1 -3 17 -2  1 -4 -5 -2  0 -3 -2 -3 -3 -2 -2 -2 -6 -2 -2  0 -2 -7 ",
+				"  1  3 -1 -1 -2  8  2 -2  0 -2 -2  0 -1 -3  0 -1  0 -1 -1 -3 -1  4  0 -7 ",
+				"  0 -1 -1  1  1  2  6 -2  0 -3 -1  2 -1 -4  1  0 -2 -1 -2 -3  0  5 -1 -7 ",
+				"  0 -2  0 -1 -4 -2 -2  8 -3 -1 -2 -1 -2 -3 -1  0 -2  1 -3 -3  0 -2 -1 -7 ",
+				" -2 -1 -1 -2 -5  0  0 -3 14 -2 -1 -2  2 -3  1 -1 -2 -5  0 -3 -2  0 -1 -7 ",
+				"  0 -3  0 -4 -2 -2 -3 -1 -2  6  2 -2  1  0 -3 -1  0 -3 -1  4 -2 -3  0 -7 ",
+				" -1 -2 -2 -1  0 -2 -1 -2 -1  2  4 -2  2  2 -3 -2  0 -2  3  1 -1 -1  0 -7 ",
+				"  0  1  0  0 -3  0  2 -1 -2 -2 -2  4  2 -1  1  0 -1 -2 -1 -2  0  1  0 -7 ",
+				"  1  0  0 -3 -2 -1 -1 -2  2  1  2  2  6 -2 -4 -2  0 -3 -1  0 -2 -1  0 -7 ",
+				" -2 -1 -1 -5 -3 -3 -4 -3 -3  0  2 -1 -2 10 -4 -1 -2  1  3  1 -3 -4 -1 -7 ",
+				" -1 -1 -3 -1 -3  0  1 -1  1 -3 -3  1 -4 -4 11 -1  0 -3 -2 -4 -2  0 -1 -7 ",
+				"  1 -1  0  0 -2 -1  0  0 -1 -1 -2  0 -2 -1 -1  4  2 -3 -2 -1  0 -1  0 -7 ",
+				"  1 -3  1 -1 -2  0 -2 -2 -2  0  0 -1  0 -2  0  2  5 -5 -1  1  0 -1  0 -7 ",
+				" -5  0 -7 -4 -2 -1 -1  1 -5 -3 -2 -2 -3  1 -3 -3 -5 20  5 -3 -5 -1 -2 -7 ",
+				" -4  0 -4 -1 -6 -1 -2 -3  0 -1  3 -1 -1  3 -2 -2 -1  5  9  1 -3 -2 -1 -7 ",
+				"  1 -1 -2 -2 -2 -3 -3 -3 -3  4  1 -2  0  1 -4 -1  1 -3  1  5 -2 -3  0 -7 ",
+				"  0 -2  4  5 -2 -1  0  0 -2 -2 -1  0 -2 -3 -2  0  0 -5 -3 -2  5  0 -1 -7 ",
+				"  0  0 -1  0  0  4  5 -2  0 -3 -1  1 -1 -4  0 -1 -1 -1 -2 -3  0  4  0 -7 ",
+				"  0 -1  0 -1 -2  0 -1 -1 -1  0  0  0  0 -1 -1  0  0 -2 -1  0 -1  0 -1 -7 ",
+				" -7 -7 -7 -7 -7 -7 -7 -7 -7 -7 -7 -7 -7 -7 -7 -7 -7 -7 -7 -7 -7 -7 -7  1 "
+
+		};
 
 		for (int n = 0; n < ll.length; n++) {
 			StringTokenizer tokenizer = new StringTokenizer(ll[n]);
@@ -552,8 +779,8 @@ public class HQFSVM_jaligner extends LibSVM {
 	}
 
 	public float[][] DnaMatrix() {
-		char[] acid = { 'A', 'T', 'C', 'G' };
-		String[] ll = { "5 -4 -4 -4", "-4  5 -4  -4", "-4 -4  5 -4", "-4 -4 -4  5" };
+		char[] acid = { 'A', 'T', 'C', 'G', 'U' };
+		String[] ll = { "1 -3 -3 -3 -3", "-3  1 -3  -3 -3", "-3 -3  1 -3 -3", "-3 -3 -3  1 -3", "-3 -3 -3  -3 1" };
 
 		for (int n = 0; n < ll.length; n++) {
 			StringTokenizer tokenizer = new StringTokenizer(ll[n]);
@@ -591,22 +818,6 @@ public class HQFSVM_jaligner extends LibSVM {
 		result.setValue(TechnicalInformation.Field.NOTE,
 				"The Weka classifier works with version 1.0 of HQFSVM-kmer-jaligner");
 
-		additional1 = result.add(Type.MISC);
-		additional1.setValue(TechnicalInformation.Field.AUTHOR, "Yasser EL-Manzalawy");
-		additional1.setValue(TechnicalInformation.Field.YEAR, "2005");
-		additional1.setValue(TechnicalInformation.Field.TITLE, "WLSVM");
-		additional1.setValue(TechnicalInformation.Field.NOTE, "LibSVM was originally developed as 'WLSVM'");
-		additional1.setValue(TechnicalInformation.Field.URL, "http://www.cs.iastate.edu/~yasser/wlsvm/");
-		additional1.setValue(TechnicalInformation.Field.NOTE,
-				"You don't need to include the WLSVM package in the CLASSPATH");
-
-		additional = result.add(Type.MISC);
-		additional.setValue(TechnicalInformation.Field.AUTHOR, "Chih-Chung Chang and Chih-Jen Lin");
-		additional.setValue(TechnicalInformation.Field.TITLE, "LIBSVM - A Library for Support Vector Machines");
-		additional.setValue(TechnicalInformation.Field.YEAR, "2001");
-		additional.setValue(TechnicalInformation.Field.URL, "http://www.csie.ntu.edu.tw/~cjlin/libsvm/");
-		additional.setValue(TechnicalInformation.Field.NOTE, "The Weka classifier works with version 2.82 of LIBSVM");
-
 		return result;
 	}
 
@@ -620,8 +831,30 @@ public class HQFSVM_jaligner extends LibSVM {
 		return "HQFSVM-jaligner wrapper, original code by hqf";
 	}
 
+	public Instances kk2instances(String[][] kk) {
+		HQFSVM_jaligner h = new HQFSVM_jaligner();
+
+		ArrayList<Attribute> l = h.attributes(kk[0].length - 2);
+		Instances instances = new Instances("kernel", l, 0);
+		instances.setClassIndex(instances.numAttributes() - 1);
+		int sum = kk.length;
+		for (int i = 0; i < sum; i++) {
+			double num[] = new double[instances.numAttributes()];
+			Instance instance1 = new DenseInstance(1, num);
+			int g;
+			for (g = 0; g < num.length - 1; g++) {
+				num[g] = Double.parseDouble(kk[i][g + 2]);
+			}
+			num[g] = instances.attribute(g).indexOfValue(kk[i][0]);
+			instances.add(instance1);
+
+		}
+		return instances;
+
+	}
+
 	public static void main(String[] args) {
-		runClassifier(new HQFSVM_jaligner(), args);
+
 	}
 
 }
