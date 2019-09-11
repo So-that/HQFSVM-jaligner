@@ -4,7 +4,7 @@
 * jdk 1.8
 * libsvm
 * weka >=3.8
-*****************
+
 ### 使用方法
 ***********************
 * 命令行: java -jar  HQFSVM-SA.jar  -f  trainfile  -p  testfile  -c  cv
