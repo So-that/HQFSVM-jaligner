@@ -13,5 +13,4 @@
 ### Weka 安装教程
 
 ******************************
-<br/>
-* 参考地址:[https://blog.csdn.net/So_that/article/details/82915198](加载自定义分类器到weka)
+* 参考地址:[加载自定义分类器到weka](https://blog.csdn.net/So_that/article/details/82915198)
