@@ -8,6 +8,7 @@
 
 ### 使用方法
 ***********************
+* 输入文件：arff格式
 * 命令行: java -jar  HQFSVM-SA.jar  -f  trainfile  -p  testfile  -c  cv
 
 
