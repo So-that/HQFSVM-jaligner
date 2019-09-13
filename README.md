@@ -10,6 +10,7 @@
 ***********************
 * 输入文件：arff格式
 * 命令行: java -jar  HQFSVM-SA.jar  -f  trainfile  -p  testfile  -c  cv
+* 测试用例: example文件夹下
 
 
 ### Weka 安装教程
