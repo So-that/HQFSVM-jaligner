@@ -9,7 +9,7 @@
 ### 使用方法
 ***********************
 * 输入文件：arff格式
-* 命令行：java &emsp;-jar &nbsp HQFSVM-SA.jar  &nbsp -f  &nbsp trainfile &nbsp  -p &nbsp testfile &nbsp -c &nbsp cv
+* 命令行：java &emsp;-jar &emsp; HQFSVM-SA.jar  &emsp; -f  &emsp; trainfile &emsp;  -p &emsp; testfile &emsp; -c &emsp; cv
 * 测试用例：见example文件夹
 
 
@@ -17,4 +17,4 @@
 
 ******************************
 * 将 HQFSVM-SA.zip 按照如下地址安装。
-* 参考地址:[加载自定义分类器到weka](https://blog.csdn.net/So_that/article/details/82915198)
+* 参考地址：[加载自定义分类器到weka](https://blog.csdn.net/So_that/article/details/82915198)
