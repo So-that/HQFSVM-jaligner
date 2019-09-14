@@ -16,5 +16,5 @@
 ### Weka 安装教程
 
 ******************************
-* 将 HQFSVM-SA.zip 按照如下地址安装。
+* 将 HQFSVM-SA.zip 按照如下教程安装。
 * 参考地址：[加载自定义分类器到weka](https://blog.csdn.net/So_that/article/details/82915198)
