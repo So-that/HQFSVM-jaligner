@@ -9,7 +9,7 @@
 ### 使用方法
 ***********************
 * 输入文件：arff格式
-* 命令行：java &nbsp-jar &nbsp HQFSVM-SA.jar  &nbsp -f  &nbsp trainfile &nbsp  -p &nbsp testfile &nbsp -c &nbsp cv
+* 命令行：java &emsp;-jar &nbsp HQFSVM-SA.jar  &nbsp -f  &nbsp trainfile &nbsp  -p &nbsp testfile &nbsp -c &nbsp cv
 * 测试用例：见example文件夹
 
 
