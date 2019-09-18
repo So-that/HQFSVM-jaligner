@@ -12,6 +12,7 @@
 ### 使用方法
 ***********************
 * 输入文件：arff格式
+* 辅助程序：Fasta2arff.py &emsp; python Fasta2arff.py -f xx.fasta -a xx.arff  -l 正例数
 * 交叉验证：java &emsp;-jar &emsp; HQFSVM-SA.jar  &emsp; -f  &emsp; trainfile &emsp;  -c &emsp; cv
 * 独立测试：java &emsp;-jar &emsp; HQFSVM-SA.jar  &emsp; -f  &emsp; trainfile &emsp;  -p &emsp; testfile &emsp; 
 * 测试用例：见example文件夹
