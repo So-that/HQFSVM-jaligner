@@ -12,7 +12,8 @@
 ### 使用方法
 ***********************
 * 输入文件：arff格式
-* 命令行：java &emsp;-jar &emsp; HQFSVM-SA.jar  &emsp; -f  &emsp; trainfile &emsp;  -p &emsp; testfile &emsp; -c &emsp; cv
+* 交叉验证：java &emsp;-jar &emsp; HQFSVM-SA.jar  &emsp; -f  &emsp; trainfile &emsp;  -c &emsp; cv
+* 独立测试：java &emsp;-jar &emsp; HQFSVM-SA.jar  &emsp; -f  &emsp; trainfile &emsp;  -p &emsp; testfile &emsp; 
 * 测试用例：见example文件夹
 
 
