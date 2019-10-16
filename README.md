@@ -9,7 +9,7 @@
 * libsvm
 * weka >=3.8
 
-### 使用方法（在命令行下测试时，使用和HQFSVM.zip同级目录的HQFSVM-SA.jar。）
+### 使用方法（在命令行下测试时，使用和HQFSVM-SA.zip同级目录的HQFSVM-SA.jar。）
 ***********************
 * 输入文件：arff格式
 * 辅助程序：Fasta2arff.py &emsp; python &emsp; Fasta2arff.py &emsp; -f &emsp; xx.fasta &emsp; -a&emsp;  xx.arff &emsp;   -l &emsp; 正例数
