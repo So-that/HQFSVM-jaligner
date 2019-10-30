@@ -12,7 +12,7 @@
 ### 使用方法（在命令行下测试时，使用和HQFSVM-SA.zip同级目录的HQFSVM-SA.jar。）
 ***********************
 
-* 输入文件：arff格式
+* 输入文件格式：arff格式
 
 * 辅助程序 Fasta2arff.py 用法：
 ```py
@@ -22,7 +22,7 @@ python Fasta2arff.py -f  xx.fasta  -a  xx.arff   -l  正例数
 ```py
 java -jar  HQFSVM-SA.jar -f  trainfile -c  cv
 ```
-* 独立测试：
+* 独立测试用法：
 ```py
 java -jar  HQFSVM-SA.jar  -f  trainfile  -p testfile 
 ```
