@@ -12,22 +12,22 @@
 ### 使用方法（在命令行下测试时，使用和HQFSVM-SA.zip同级目录的HQFSVM-SA.jar。）
 ***********************
 
-输入文件：arff格式
+* 输入文件：arff格式
 
-辅助程序 Fasta2arff.py 用法：
+* 辅助程序 Fasta2arff.py 用法：
 ```py
 python Fasta2arff.py -f  xx.fasta  -a  xx.arff   -l  正例数
 ```
-交叉验证用法：
+* 交叉验证用法：
 ```py
 java -jar  HQFSVM-SA.jar -f  trainfile -c  cv
 ```
+* 独立测试：
 ```py
-独立测试：java -jar  HQFSVM-SA.jar  -f  trainfile  -p testfile 
+java -jar  HQFSVM-SA.jar  -f  trainfile  -p testfile 
 ```
-```py
-测试用例：见example文件夹
-```
+
+* 测试用例：见example文件夹
 
 ### Weka 安装教程
 
