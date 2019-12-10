@@ -16,7 +16,7 @@
 * 先将数据整成标准的arff格式，不然无法运行程序，可通过下面辅助程序将fasta文件转化为arff文件
 
 * 辅助程序 Fasta2arff.py 用法（其中numpos为正样本的个数）：
-```java
+```py
 python Fasta2arff.py -f  xx.fasta  -a  xx.arff   -l  numpos
 ```
 * 交叉验证用法：
