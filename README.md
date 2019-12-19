@@ -21,14 +21,14 @@ python Fasta2arff.py -f  xx.fasta  -a  xx.arff   -l  numpos
 ```
 * 交叉验证用法：
 ```java
-java -jar  HQFSVM-SA.jar -f  trainfile -c  cv
+java -jar  HQFSVM-SA.jar -f  train.arff -c  cv
 ```
 * 独立测试用法：
 ```java
-java -jar  HQFSVM-SA.jar  -f  trainfile  -p testfile 
+java -jar  HQFSVM-SA.jar  -f  train.arff  -p test.arff
 ```
 
-* 测试用例：见example文件夹
+* 测试用例：见example文件夹(其中包含的是转化好的arff格式数据，仅供参考或测试使用)
 
 ### Weka 安装教程
 
