@@ -6,7 +6,6 @@
 ### 环境
 ***********
 * jdk 1.8
-* libsvm
 * weka >=3.8
 
 ### 使用方法（在命令行下测试时，使用和HQFSVM-SA.zip同级目录的HQFSVM-SA.jar。）
